@@ -3,11 +3,13 @@ import socket
 import binascii
 import ipaddress
 
+
 class WOL(object):
-    '''
+    """
         Class that creates Wake On Lan massages and broadcasts.\n
-        Method to run: Execute(mac addresses list, IP addresses list) 
-    '''
+        Method to run: Execute(mac addresses list, IP addresses list)
+    """
+
     def __init__(self) -> None:
         self.port = 9
         self.socket = None
@@ -16,20 +18,20 @@ class WOL(object):
         self.broadcast = 'ff' * 6
         self.mac_address_regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
 
-    def Execute(self, mac_addresses: list, ip_addresses: list) -> dict:
-        '''
+    def wake(self, mac_addresses: list, ip_addresses: list) -> dict:
+        """
             Function creates the wake on lan messages and broadcasts.\n
             First parameter list of mac addresses.\n
             Second parameter list of IP addresses.\n
             Returns all mac & IP addresses that couldn't be used.
-        '''
+        """
         self.__validate_ip_addresses(ip_addresses)
         self.__validate_mac_addresses(mac_addresses)
         self.__open_socket()
         self.__internal_execute()
         self.__close_socket_and_clean_lists()
-        return {"mac" : [set(mac_addresses) - set(self.mac_list)], "IP" : [set(ip_addresses) - set(self.ip_list)]}
-    
+        return {"mac": [set(mac_addresses) - set(self.mac_list)], "IP": [set(ip_addresses) - set(self.ip_list)]}
+
     def __validate_ip_addresses(self, ip_addresses: list) -> None:
         for ip in ip_addresses:
             try:
@@ -38,7 +40,7 @@ class WOL(object):
                 pass
 
     def __validate_mac_addresses(self, mac_addresses: list) -> None:
-        self.mac_list =  [mac for mac in mac_addresses if re.match(self.mac_address_regex, mac)]
+        self.mac_list = [mac for mac in mac_addresses if re.match(self.mac_address_regex, mac)]
 
     def __open_socket(self) -> None:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
